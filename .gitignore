@@ -1,4 +1,16 @@
+
 admin/node_modules
 admin/package-lock.json
 admin/yarn.lock
+
+
+
+
+# for app part
+
+app/node_modules
 admin/dist
+app/package-lock.json
+app/yarn.lock
+
+admin/src/config.env

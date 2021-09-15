@@ -14,11 +14,15 @@ const typeorm_1 = require("typeorm");
 let Product = class Product {
 };
 __decorate([
-    typeorm_1.PrimaryGeneratedColumn(),
-    __metadata("design:type", Number)
+    typeorm_1.ObjectIdColumn(),
+    __metadata("design:type", String)
 ], Product.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column("text"),
+    typeorm_1.Column({ unique: true }),
+    __metadata("design:type", Number)
+], Product.prototype, "admin_id", void 0);
+__decorate([
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], Product.prototype, "title", void 0);
 __decorate([

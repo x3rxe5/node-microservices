@@ -1,0 +1,14 @@
+{
+    "type":"mongodb",
+    "host":"localhost",
+    "synchronize":true,
+    "logging":false,
+    "database":"yt_node_admin",
+    "entities":[
+      "dist/entity/*.js"
+    ],
+    "cli":{
+        "entitiesDir":"src/entity"
+    }
+  }
+  
