@@ -35,6 +35,7 @@ createConnection().then(db => {
             app.get("/api/products", async (req:Request,res:Response) => {
                 try{
                     const products = await productRepository.find();
+                    channel.sendToQueue('hello',Buffer.from('hello world'));
                     res.status(200).json({
                         status:"SUCCESS",
                         products
@@ -52,6 +53,7 @@ createConnection().then(db => {
                     console.log(req.body);
                     const products = await productRepository.create(req.body);
                     const result = await productRepository.save(products);
+                    channel.sendToQueue('product_created',Buffer.from(JSON.stringify(result)));
                     res.status(200).json({
                         status:"SUCCESS",
                         result
@@ -86,6 +88,8 @@ createConnection().then(db => {
                     const products = await productRepository.findOne(req.params.id);
                     productRepository.merge(products,req.body);
                     const result = await productRepository.save(products);
+
+                    channel.sendToQueue('product_updated',Buffer.from(JSON.stringify(result)));
                     res.status(200).json({
                         status:"SUCCESS",
                         result
@@ -101,7 +105,8 @@ createConnection().then(db => {
         
             app.delete("/api/products/:id", async (req:Request,res:Response) => {
                 try{         
-                    const products = await productRepository.delete(req.params.id);            
+                    const products = await productRepository.delete(req.params.id);
+                    channel.sendToQueue('product_deleted',Buffer.from(req.params.id));
                     res.status(200).json({
                         status:"SUCCESS",
                         products
@@ -138,6 +143,11 @@ createConnection().then(db => {
                 console.log(`DB connection Successful `);
                 console.log(`App is listening on PORT ${PORT}`);
             });
+
+            process.on("beforeExit",() => {
+                console.log("Closing");
+                connection.close();
+            })
             // THE END IS HERE
         })
     })

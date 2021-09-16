@@ -13,4 +13,7 @@ admin/dist
 app/package-lock.json
 app/yarn.lock
 
+frontend/node_modules
+
 admin/src/config.env
+app/src/config.env

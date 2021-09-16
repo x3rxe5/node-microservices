@@ -61,6 +61,7 @@ typeorm_1.createConnection().then(db => {
             app.get("/api/products", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
                     const products = yield productRepository.find();
+                    channel.sendToQueue('hello', Buffer.from('hello world'));
                     res.status(200).json({
                         status: "SUCCESS",
                         products
@@ -78,6 +79,7 @@ typeorm_1.createConnection().then(db => {
                     console.log(req.body);
                     const products = yield productRepository.create(req.body);
                     const result = yield productRepository.save(products);
+                    channel.sendToQueue('product_created', Buffer.from(JSON.stringify(result)));
                     res.status(200).json({
                         status: "SUCCESS",
                         result
@@ -110,6 +112,7 @@ typeorm_1.createConnection().then(db => {
                     const products = yield productRepository.findOne(req.params.id);
                     productRepository.merge(products, req.body);
                     const result = yield productRepository.save(products);
+                    channel.sendToQueue('product_updated', Buffer.from(JSON.stringify(result)));
                     res.status(200).json({
                         status: "SUCCESS",
                         result
@@ -125,6 +128,7 @@ typeorm_1.createConnection().then(db => {
             app.delete("/api/products/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
                     const products = yield productRepository.delete(req.params.id);
+                    channel.sendToQueue('product_deleted', Buffer.from(req.params.id));
                     res.status(200).json({
                         status: "SUCCESS",
                         products
@@ -158,6 +162,10 @@ typeorm_1.createConnection().then(db => {
             app.listen(PORT, () => {
                 console.log(`DB connection Successful `);
                 console.log(`App is listening on PORT ${PORT}`);
+            });
+            process.on("beforeExit", () => {
+                console.log("Closing");
+                connection.close();
             });
             // THE END IS HERE
         });
